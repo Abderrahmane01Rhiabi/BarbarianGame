@@ -17,3 +17,8 @@ struct UserCredentials: Codable {
 struct AuthResponse: Codable {
     let token: String
 }
+
+struct RegisterResponse: Codable {
+    let status: String
+}
+

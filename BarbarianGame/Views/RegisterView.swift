@@ -125,7 +125,10 @@ struct RegisterView: View {
                 password: password
             )
             
-            print("inscrit avec token: \(response.token)")
+            print("inscription reussie, connecte automatiquement")
+            
+            // notifier le authmanager
+            AuthManager.shared.login()
             
             // inscription reussie
             isLoading = false

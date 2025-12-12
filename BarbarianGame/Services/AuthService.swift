@@ -18,17 +18,17 @@ class AuthService {
     private init() {}
     
     // inscription
-    func register(username: String, password: String) async throws -> AuthResponse {
+    func register(username: String, password: String) async throws {
         let credentials = UserCredentials(username: username, password: password)
-        let response: AuthResponse = try await networkManager.post(
+        let response: RegisterResponse = try await networkManager.post(
             endpoint: .register,
             body: credentials
         )
         
-        // sauvegarder le token
-        networkManager.setAuthToken(response.token)
+        print("inscription reussie: \(response.status)")
         
-        return response
+        // apres inscription il faut se connecter pour avoir le token
+        let loginResponse = try await login(username: username, password: password)
     }
     
     // connexion
@@ -47,11 +47,16 @@ class AuthService {
     
     // deconnexion
     func logout() async throws {
-        // appeler l'api pour invalider le token
-        struct EmptyResponse: Codable {}
-        let _: EmptyResponse = try await networkManager.post(endpoint: .logout)
+        // essayer d'appeler l'api
+        do {
+            struct EmptyResponse: Codable {}
+            let _: EmptyResponse = try await networkManager.post(endpoint: .logout)
+        } catch {
+            // si erreur api on l'ignore et on continue quand meme
+            print("info: appel logout api echoue: \(error)")
+        }
         
-        // supprimer le token local
+        // dans tous les cas supprimer le token local
         networkManager.clearAuthToken()
     }
     

@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct BarbarianGameApp: App {
+    
+    // observer l'etat d'authentification
+    @StateObject private var authManager = AuthManager.shared
+    
     var body: some Scene {
         WindowGroup {
-            LoginView()
+            if authManager.isAuthenticated {
+                HomeView()
+            } else {
+                LoginView()
+            }
         }
     }
 }

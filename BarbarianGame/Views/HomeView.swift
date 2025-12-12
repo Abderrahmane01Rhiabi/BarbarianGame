@@ -48,13 +48,7 @@ struct HomeView: View {
     
     func logout() {
         Task {
-            do {
-                try await AuthService.shared.logout()
-                // retour au login
-                // on verra ca plus tard
-            } catch {
-                print("erreur logout: \(error)")
-            }
+            await AuthManager.shared.logout()
         }
     }
 }

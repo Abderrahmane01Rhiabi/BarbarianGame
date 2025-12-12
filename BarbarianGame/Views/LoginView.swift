@@ -104,6 +104,9 @@ struct LoginView: View {
             
             print("connecte avec token: \(response.token)")
             
+            // notifier le authmanager
+            AuthManager.shared.login()
+            
             // connexion reussie
             isLoading = false
             isLoggedIn = true
