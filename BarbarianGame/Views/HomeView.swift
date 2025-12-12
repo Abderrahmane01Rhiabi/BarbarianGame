@@ -9,19 +9,115 @@ import SwiftUI
 
 struct HomeView: View {
     
+    @State private var barbarian: Barbarian?
+    @State private var isLoading: Bool = true
+    @State private var errorMessage: String?
     @State private var showingLogoutAlert = false
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
                 
-                Text("Bienvenue dans Barbarian Game")
-                    .font(.title)
-                    .bold()
-                    .padding()
+                Spacer()
                 
-                Text("Ton barbare t'attend...")
-                    .foregroundColor(.gray)
+                if isLoading {
+                    // chargement
+                    ProgressView("chargement...")
+                    
+                } else if let errorMessage = errorMessage {
+                    // erreur
+                    VStack(spacing: 10) {
+                        Text("erreur")
+                            .font(.headline)
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.caption)
+                            .multilineTextAlignment(.center)
+                        
+                        Button("reessayer") {
+                            Task {
+                                await loadBarbarian()
+                            }
+                        }
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
+                    
+                } else if let barbarian = barbarian {
+                    // a un barbare
+                    VStack(spacing: 15) {
+                        Text("bienvenue")
+                            .font(.title2)
+                            .foregroundColor(.gray)
+                        
+                        Text(barbarian.name)
+                            .font(.largeTitle)
+                            .bold()
+                        
+                        HStack(spacing: 20) {
+                            VStack {
+                                Text("niveau")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                Text("\(barbarian.love)")
+                                    .font(.title)
+                                    .bold()
+                            }
+                            
+                            VStack {
+                                Text("exp")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                Text("\(barbarian.exp)")
+                                    .font(.title)
+                                    .bold()
+                            }
+                        }
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(10)
+                        
+                        NavigationLink(destination: BarbarianDetailView(barbarian: barbarian)) {
+                            Text("voir mon barbare")
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                        .padding(.horizontal)
+                    }
+                    
+                } else {
+                    // pas de barbare
+                    VStack(spacing: 15) {
+                        Text("barbarian game")
+                            .font(.largeTitle)
+                            .bold()
+                        
+                        Text("tu n'as pas encore de barbare")
+                            .font(.title3)
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+                        
+                        Image(systemName: "figure.martial.arts")
+                            .font(.system(size: 80))
+                            .foregroundColor(.orange)
+                            .padding()
+                        
+                        NavigationLink(destination: CreateBarbarianView()) {
+                            Text("creer mon barbare")
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.green)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                        .padding(.horizontal)
+                    }
+                }
                 
                 Spacer()
                 
@@ -29,12 +125,12 @@ struct HomeView: View {
                 Button(action: {
                     showingLogoutAlert = true
                 }) {
-                    Text("Deconnexion")
+                    Text("deconnexion")
                         .foregroundColor(.red)
                 }
-                .alert("Deconnexion", isPresented: $showingLogoutAlert) {
-                    Button("Annuler", role: .cancel) { }
-                    Button("Deconnexion", role: .destructive) {
+                .alert("deconnexion", isPresented: $showingLogoutAlert) {
+                    Button("annuler", role: .cancel) { }
+                    Button("deconnexion", role: .destructive) {
                         logout()
                     }
                 } message: {
@@ -42,7 +138,24 @@ struct HomeView: View {
                 }
                 
             }
-            .navigationTitle("Accueil")
+            Spacer()
+            .task {
+                await loadBarbarian()
+            }
+        }
+    }
+    
+    func loadBarbarian() async {
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            barbarian = try await BarbarianService.shared.getMyBarbarian()
+            isLoading = false
+        } catch {
+            isLoading = false
+            errorMessage = error.localizedDescription
+            print("erreur chargement barbare: \(error)")
         }
     }
     

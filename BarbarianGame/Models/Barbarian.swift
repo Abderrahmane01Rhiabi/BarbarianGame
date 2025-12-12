@@ -15,7 +15,7 @@ struct Barbarian: Codable, Identifiable {
     let name: String
     let avatarId: Int?
     
-    // rogression
+    // progression
     let love: Int
     let exp: Int
     let skillPoints: Int
@@ -27,9 +27,14 @@ struct Barbarian: Codable, Identifiable {
     let evasion: Int
     
     // points de vie
-    let hp: Int
     let maxHp: Int
     
+    // hp calcule (par defaut = maxHp)
+    var hp: Int {
+        return maxHp
+    }
+    
+    // mappage json
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -39,10 +44,8 @@ struct Barbarian: Codable, Identifiable {
         case skillPoints = "skill_points"
         case attack
         case defense
-        case precision
+        case precision = "accuracy"
         case evasion
-        case hp
-        case maxHp = "max_hp"
+        case maxHp = "hp_max"
     }
-    
 }
