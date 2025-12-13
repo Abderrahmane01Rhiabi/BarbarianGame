@@ -28,4 +28,16 @@ class CombatService {
             }
         }
     
+    // recuperer les combats
+    func getMyFights() async throws -> [FightHistory] {
+        do {
+            let fights: [FightHistory] = try await networkManager.get(
+                endpoint: .myFights
+            )
+            return fights
+        } catch {
+            throw error
+        }
+    }
+    
 }

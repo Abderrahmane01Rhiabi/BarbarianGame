@@ -8,9 +8,14 @@
 import SwiftUI
 
 struct BarbarianDetailView: View {
-    let barbarian : Barbarian
+    @State private var barbarian: Barbarian // rendre le modifiable, pour refrechire les donnees de la vue
     @State private var avatar: Avatar?
     @State private var isLoadingAvatar = false
+    
+    init(barbarian: Barbarian) {
+        self._barbarian = State(initialValue: barbarian)
+    }
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -147,7 +152,7 @@ struct BarbarianDetailView: View {
                         .cornerRadius(10)
                     }
                     
-                    NavigationLink(destination: Text("historique")) {
+                    NavigationLink(destination: FightHistoryView(myBarbarian: barbarian)) {
                         HStack {
                             Image(systemName: "list.bullet")
                             Text("historique des combats")
@@ -165,6 +170,11 @@ struct BarbarianDetailView: View {
         }
         .task{
             await loadAvatar()
+        }
+        .onAppear {
+            Task {
+                await refreshBarbarian()
+            }
         }
         .navigationTitle("mon barbare")
         .navigationBarTitleDisplayMode(.inline)
@@ -184,6 +194,16 @@ struct BarbarianDetailView: View {
         
         isLoadingAvatar = false
     }
+    
+    func refreshBarbarian() async {
+            do {
+                if let updatedBarbarian = try await BarbarianService.shared.getMyBarbarian() {
+                    barbarian = updatedBarbarian
+                }
+            } catch {
+                print("erreur rafraichissement barbare: \(error)")
+            }
+        }
     
     var hpPercentage: Double {
         return Double(barbarian.hp) / Double(barbarian.maxHp)

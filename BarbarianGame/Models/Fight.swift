@@ -7,6 +7,54 @@
 
 import Foundation
 
+
+// reponse de l'historique des combats
+struct FightHistory: Codable, Identifiable {
+    let id: Int
+    let attackerId: Int
+    let defenderId: Int
+    let winnerId: Int
+    let createdAt: String
+    let expAttacker: Int
+    let expDefender: Int
+    let log: FightLog
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case attackerId = "attacker_id"
+        case defenderId = "defender_id"
+        case winnerId = "winner_id"
+        case createdAt = "created_at"
+        case expAttacker = "exp_attacker"
+        case expDefender = "exp_defender"
+        case log
+    }
+}
+
+// extensions pour faciliter l'utilisation
+extension FightHistory {
+    
+    // exp gagnee par mon barbare
+    func expGained(myBarbarianId: Int) -> Int {
+        return attackerId == myBarbarianId ? expAttacker : expDefender
+    }
+    
+    // est ce que j'ai gagne
+    func didIWin(myBarbarianId: Int) -> Bool {
+        return winnerId == myBarbarianId
+    }
+    
+    // id de l'adversaire
+    func opponentId(myBarbarianId: Int) -> Int {
+        return attackerId == myBarbarianId ? defenderId : attackerId
+    }
+    
+    // est ce que j'ai initie le combat
+    func didIInitiate(myBarbarianId: Int) -> Bool {
+        return attackerId == myBarbarianId
+    }
+}
+
 // un combat complet entre deux barbares
 struct Fight: Codable {
     
