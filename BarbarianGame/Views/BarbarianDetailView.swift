@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct BarbarianDetailView: View {
-    
-    let barbarian: Barbarian
+    let barbarian : Barbarian
     @State private var avatar: Avatar?
     @State private var isLoadingAvatar = false
-    
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -23,17 +21,16 @@ struct BarbarianDetailView: View {
                         image
                             .resizable()
                             .scaledToFit()
-                    } placeholder: {
+                        } placeholder: {
                         ProgressView()
-                    }
-                    .frame(width: 150, height: 150)
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(15)
-                } else if isLoadingAvatar {
-                    ProgressView()
+                        }
                         .frame(width: 150, height: 150)
-                }
-                
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(15)
+                    } else if isLoadingAvatar {
+                        ProgressView()
+                        .frame(width: 150, height: 150)
+                    }
                 // nom
                 Text(barbarian.name)
                     .font(.largeTitle)
@@ -125,7 +122,7 @@ struct BarbarianDetailView: View {
                 VStack(spacing: 15) {
                     
                     if barbarian.skillPoints > 0 {
-                        NavigationLink(destination: Text("depenser points (a venir)")) {
+                        NavigationLink(destination: Text("depenser points")) {
                             HStack {
                                 Image(systemName: "star.fill")
                                 Text("depenser \(barbarian.skillPoints) points")
@@ -138,7 +135,7 @@ struct BarbarianDetailView: View {
                         }
                     }
                     
-                    NavigationLink(destination: Text("combattre (a venir)")) {
+                    NavigationLink(destination:  CombatView(myBarbarian: barbarian)) {
                         HStack {
                             Image(systemName: "figure.martial.arts")
                             Text("lancer un combat")
@@ -150,7 +147,7 @@ struct BarbarianDetailView: View {
                         .cornerRadius(10)
                     }
                     
-                    NavigationLink(destination: Text("historique (a venir)")) {
+                    NavigationLink(destination: Text("historique")) {
                         HStack {
                             Image(systemName: "list.bullet")
                             Text("historique des combats")
@@ -166,7 +163,7 @@ struct BarbarianDetailView: View {
             }
             .padding()
         }
-        .task {
+        .task{
             await loadAvatar()
         }
         .navigationTitle("mon barbare")
@@ -193,6 +190,7 @@ struct BarbarianDetailView: View {
     }
 }
 
+// composant pour afficher une stat
 struct StatRow: View {
     let icon: String
     let name: String
@@ -229,7 +227,10 @@ struct StatRow: View {
             defense: 1,
             precision: 1,
             evasion: 1,
-            maxHp: 100
+            maxHp: 100,
+            createdAt: "aujourd'hui",
+            lastFightAt: nil
+            
         ))
     }
 }

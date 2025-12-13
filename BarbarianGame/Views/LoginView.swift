@@ -130,6 +130,8 @@ struct LoginView: View {
                     errorMessage = "url invalide"
                 case .noData:
                     errorMessage = "pas de donnees"
+                case .waitdelay:
+                    errorMessage = "retry plus tard"
                 }
             } else {
                 errorMessage = "erreur: \(error.localizedDescription)"

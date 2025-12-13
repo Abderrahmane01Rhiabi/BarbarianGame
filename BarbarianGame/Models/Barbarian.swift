@@ -28,6 +28,8 @@ struct Barbarian: Codable, Identifiable {
     
     // points de vie
     let maxHp: Int
+    let createdAt : String
+    let lastFightAt : String?
     
     // hp calcule (par defaut = maxHp)
     var hp: Int {
@@ -47,5 +49,7 @@ struct Barbarian: Codable, Identifiable {
         case precision = "accuracy"
         case evasion
         case maxHp = "hp_max"
+        case createdAt = "created_at"
+        case lastFightAt = "last_fight_at"
     }
 }

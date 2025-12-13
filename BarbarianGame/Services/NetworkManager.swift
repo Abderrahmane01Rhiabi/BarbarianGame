@@ -14,6 +14,7 @@ enum NetworkError: Error {
     case decodingError
     case serverError(String)
     case unauthorized
+    case waitdelay
 }
 
 // gestionnaire principal des requetes http
@@ -88,7 +89,6 @@ class NetworkManager {
         request.httpBody = try JSONEncoder().encode(body)
         
         let (data, response) = try await URLSession.shared.data(for: request)
-        
         try validateResponse(response, data: data)
         
         do {
@@ -114,7 +114,6 @@ class NetworkManager {
         }
         
         let (data, response) = try await URLSession.shared.data(for: request)
-        
         try validateResponse(response, data: data)
         
         do {
@@ -136,6 +135,8 @@ class NetworkManager {
             return
         case 401:
             throw NetworkError.unauthorized
+        case 429 :
+            throw NetworkError.waitdelay
         default:
             if let errorMessage = String(data: data, encoding: .utf8) {
                 throw NetworkError.serverError(errorMessage)

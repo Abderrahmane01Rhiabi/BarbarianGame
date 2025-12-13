@@ -8,53 +8,57 @@
 import Foundation
 
 // un combat complet entre deux barbares
-struct Fight: Codable, Identifiable {
+struct Fight: Codable {
     
-    let id: Int
-    let initiatorId: Int
-    let opponentId: Int
+    let opponent : Barbarian
     let winnerId: Int
     let expGained: Int
-    let timestamp: String
-    let rounds: [FightRound]?
+    let log: FightLog
     
     // mappage json
     enum CodingKeys: String, CodingKey {
-        case id
-        case initiatorId = "initiator_id"
-        case opponentId = "opponent_id"
+        case opponent
         case winnerId = "winner_id"
-        case expGained = "exp_gained"
-        case timestamp
-        case rounds
+        case expGained = "exp_gain"
+        case log
     }
 }
 
+struct FightLog: Codable {
+    let attackerId: Int
+    let defenderId: Int
+    let rounds: [FightRound]?
+    let winnerId: Int
+
+    enum CodingKeys: String, CodingKey {
+        case attackerId = "attacker_id"
+        case defenderId = "defender_id"
+        case rounds
+        case winnerId = "winner_id"
+    }
+}
 // un round individuel dans un combat
 struct FightRound: Codable, Identifiable {
     
     let round: Int
-    let attackerId: Int
-    let attackerName: String
-    let defenderId: Int
-    let defenderName: String
+    let actor: Int
+    let target: Int
     let hit: Bool
     let damage: Int
-    let defenderHp: Int
+    let hpTargetAfter: Int
     
-    // id pour swiftui list
-    var id: Int { round }
+    // id pour swiftui list, l'id du round correspond au numéro du round et l'id de l'attaquant
+    var id: String { "\(round)-\(actor)" }
+
     
     // mappage json
     enum CodingKeys: String, CodingKey {
         case round
-        case attackerId = "attacker_id"
-        case attackerName = "attacker_name"
-        case defenderId = "defender_id"
-        case defenderName = "defender_name"
+        case actor
+        case target
         case hit
         case damage
-        case defenderHp = "defender_hp"
+        case hpTargetAfter = "hp_target_after"
     }
 }
 
@@ -66,25 +70,38 @@ extension Fight {
         return winnerId == myBarbarianId
     }
     
+    // id de mon adversaire
+    func getOpponentId() -> Int {
+        return opponent.id
+    }
+}
+
+extension FightLog{
+    
     // est-ce que j'ai initie ce combat
     func didIInitiate(myBarbarianId: Int) -> Bool {
-        return initiatorId == myBarbarianId
-    }
-    
-    // id de mon adversaire
-    func getOpponentId(myBarbarianId: Int) -> Int {
-        return initiatorId == myBarbarianId ? opponentId : initiatorId
+        return attackerId == myBarbarianId
     }
 }
 
 extension FightRound {
     
     // texte descriptif du round
-    var description: String {
-        if hit {
-            return "\(attackerName) frappe \(defenderName) pour \(damage) degats"
-        } else {
-            return "\(defenderName) esquive l'attaque de \(attackerName)"
+    func description(myBarbarian : Barbarian, opponent : Barbarian)-> String {
+        if actor == myBarbarian.id{
+            if hit  {
+                return "\(myBarbarian.name) frappe \(opponent.name) pour \(damage) degats"
+            } else {
+                return "\(opponent.name) esquive l'attaque de \(myBarbarian.name)"
+            }
         }
+        else {
+            if hit  {
+                return "\(opponent.name) frappe \(myBarbarian.name) pour \(damage) degats"
+            } else {
+                return "\(myBarbarian.name) esquive l'attaque de \(opponent.name)"
+            }
+        }
+
     }
 }
