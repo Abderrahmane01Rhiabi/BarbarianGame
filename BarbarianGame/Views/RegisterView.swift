@@ -155,6 +155,8 @@ struct RegisterView: View {
                     errorMessage = "pas de donnees"
                 case .waitdelay:
                     errorMessage = "retry plus tard"
+                case .pointinsuffisant:
+                    errorMessage = "pas assez de points"
                 }
                 
             } else {

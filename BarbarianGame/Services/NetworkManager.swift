@@ -15,6 +15,7 @@ enum NetworkError: Error {
     case serverError(String)
     case unauthorized
     case waitdelay
+    case pointinsuffisant
 }
 
 // gestionnaire principal des requetes http
@@ -133,6 +134,8 @@ class NetworkManager {
         switch httpResponse.statusCode {
         case 200...299:
             return
+        case 400:
+            throw NetworkError.pointinsuffisant
         case 401:
             throw NetworkError.unauthorized
         case 429 :

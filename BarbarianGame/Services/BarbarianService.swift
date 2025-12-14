@@ -85,12 +85,19 @@ class BarbarianService {
     }
     
     // depenser des points de competence
-    func spendSkillPoints(attack: Int, defense: Int, precision: Int, evasion: Int) async throws -> Barbarian {
+    func spendSkillPoints(attack: Int, defense: Int, precision: Int, evasion: Int) async throws{
         struct SpendPointsRequest: Codable {
             let attack: Int
             let defense: Int
             let precision: Int
             let evasion: Int
+            
+            enum CodingKeys: String, CodingKey {
+                case attack
+                case defense
+                case precision = "accuracy"
+                case evasion
+            }
         }
         
         let request = SpendPointsRequest(
@@ -100,10 +107,9 @@ class BarbarianService {
             evasion: evasion
         )
         
-        let barbarian: Barbarian = try await networkManager.post(
+        let _: Barbarian = try await networkManager.post(
             endpoint: .spendSkillPoints,
             body: request
         )
-        return barbarian
     }
 }

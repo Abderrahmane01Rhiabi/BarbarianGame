@@ -132,7 +132,10 @@ struct LoginView: View {
                     errorMessage = "pas de donnees"
                 case .waitdelay:
                     errorMessage = "retry plus tard"
+                case .pointinsuffisant:
+                        errorMessage = "pas assez de points"
                 }
+           
             } else {
                 errorMessage = "erreur: \(error.localizedDescription)"
             }

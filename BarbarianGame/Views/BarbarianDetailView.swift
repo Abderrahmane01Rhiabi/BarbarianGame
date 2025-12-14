@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct BarbarianDetailView: View {
-    @State private var barbarian: Barbarian // rendre le modifiable, pour refrechire les donnees de la vue
+    @State private var barbarian: Barbarian // rendre le modifiable, pour rafraichire les donnees de la vue
     @State private var avatar: Avatar?
     @State private var isLoadingAvatar = false
     
@@ -127,7 +127,7 @@ struct BarbarianDetailView: View {
                 VStack(spacing: 15) {
                     
                     if barbarian.skillPoints > 0 {
-                        NavigationLink(destination: Text("depenser points")) {
+                        NavigationLink(destination: PointsView(maxPoints: barbarian.skillPoints)) {
                             HStack {
                                 Image(systemName: "star.fill")
                                 Text("depenser \(barbarian.skillPoints) points")
