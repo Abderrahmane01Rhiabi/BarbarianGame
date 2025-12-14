@@ -2,7 +2,6 @@ import SwiftUI
 struct PointsView: View {
 
     @StateObject private var vm: PointsViewModel
-    @Environment(\.dismiss) private var dismiss
 
     init(maxPoints: Int) {
         _vm = StateObject(wrappedValue: PointsViewModel(maxPoints: maxPoints))
