@@ -12,6 +12,15 @@ struct BarbarianDetailView: View {
     @State private var avatar: Avatar?
     @State private var isLoadingAvatar = false
     
+
+    // observer les notifications de combat
+    @StateObject private var notificationManager = FightNotificationManager.shared
+
+
+    // timer pour le polling
+    @State private var pollTimer: Timer?
+    
+    
     init(barbarian: Barbarian) {
         self._barbarian = State(initialValue: barbarian)
     }
@@ -156,10 +165,38 @@ struct BarbarianDetailView: View {
                         HStack {
                             Image(systemName: "list.bullet")
                             Text("historique des combats")
+                            
+                            // badge pour nouveaux combats
+                            if notificationManager.newFightsCount > 0 {
+                                Text("\(notificationManager.newFightsCount)")
+                                    .font(.caption)
+                                    .bold()
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.red)
+                                    .clipShape(Capsule())
+                            }
+                            
                         }
+                        
+                        
+                        
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
+                    
+                    NavigationLink(destination: LeaderboardView()) {
+                        HStack {
+                            Image(systemName: "trophy.fill")
+                            Text("classement")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.purple)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                     }
@@ -175,6 +212,10 @@ struct BarbarianDetailView: View {
             Task {
                 await refreshBarbarian()
             }
+            startPolling()  // demarrer le polling
+        }
+        .onDisappear {
+            stopPolling()  // arreter le polling quand on quitte la vue
         }
         .navigationTitle("mon barbare")
         .navigationBarTitleDisplayMode(.inline)
@@ -207,6 +248,38 @@ struct BarbarianDetailView: View {
     
     var hpPercentage: Double {
         return Double(barbarian.hp) / Double(barbarian.maxHp)
+    }
+    
+    
+    // polling pour nouveaux combats
+    func startPolling() {
+        // verifier immediatement
+        Task {
+            await checkForNewFights()
+        }
+        
+        // puis verifier toutes les 30 secondes
+        pollTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { _ in
+            Task {
+                await checkForNewFights()
+            }
+        }
+    }
+
+    // arreter le polling
+    func stopPolling() {
+        pollTimer?.invalidate()
+        pollTimer = nil
+    }
+
+    // verifier la presence de nouveaux combats
+    func checkForNewFights() async {
+        do {
+            let fights = try await CombatService.shared.getMyFights()
+            notificationManager.countNewFights(fights: fights, myBarbarianId: barbarian.id)
+        } catch {
+            print("erreur verification nouveaux combats: \(error)")
+        }
     }
 }
 

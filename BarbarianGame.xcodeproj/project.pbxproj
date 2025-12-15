@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3BF893912EEF7E8A00FBB3A9 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 3BF893902EEF7E8100FBB3A9 /* .gitignore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		3BF8933E2EEA20D800FBB3A9 /* BarbarianGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BarbarianGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BF893902EEF7E8100FBB3A9 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +37,7 @@
 		3BF893352EEA20D800FBB3A9 = {
 			isa = PBXGroup;
 			children = (
+				3BF893902EEF7E8100FBB3A9 /* .gitignore */,
 				3BF893402EEA20D800FBB3A9 /* BarbarianGame */,
 				3BF8933F2EEA20D800FBB3A9 /* Products */,
 			);
@@ -109,6 +115,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3BF893912EEF7E8A00FBB3A9 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

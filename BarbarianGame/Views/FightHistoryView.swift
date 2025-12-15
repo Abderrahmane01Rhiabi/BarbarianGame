@@ -14,6 +14,9 @@ struct FightHistoryView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     
+    
+    @StateObject private var notificationManager = FightNotificationManager.shared
+    
     var body: some View {
         VStack {
             if isLoading {
@@ -79,6 +82,10 @@ struct FightHistoryView: View {
         
         do {
             fights = try await CombatService.shared.getMyFights()
+            
+            // marquer comme lu
+            notificationManager.markAsChecked()
+            
             isLoading = false
         } catch {
             isLoading = false
@@ -330,3 +337,4 @@ struct FightHistoryDetailView: View {
         ))
     }
 }
+

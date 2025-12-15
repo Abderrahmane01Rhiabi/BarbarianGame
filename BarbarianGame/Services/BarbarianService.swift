@@ -112,4 +112,15 @@ class BarbarianService {
             body: request
         )
     }
+    
+    // recuperer le leaderboard des barbares
+    func fetchLeaderboard() async throws -> [LeaderboardEntry] {
+        let entries: [LeaderboardEntry] = try await networkManager.get(
+            endpoint: .leaderboard
+        )
+        return entries
+    }
+    
 }
+
+

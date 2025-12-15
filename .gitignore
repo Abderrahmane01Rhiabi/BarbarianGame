@@ -1,0 +1,10 @@
+//
+//  .gitignore
+//  BarbarianGame
+//
+//  Created by tplocal on 15/12/2025.
+//
+
+xcuserdata/
+*.xcuserstate
+.DS_Store
