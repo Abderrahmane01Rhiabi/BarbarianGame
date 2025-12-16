@@ -136,7 +136,7 @@ struct BarbarianDetailView: View {
                 VStack(spacing: 15) {
                     
                     if barbarian.skillPoints > 0 {
-                        NavigationLink(destination: PointsView(maxPoints: barbarian.skillPoints)) {
+                        NavigationLink(destination: PointsView(barbarian : barbarian,maxPoints: barbarian.skillPoints)) {
                             HStack {
                                 Image(systemName: "star.fill")
                                 Text("depenser \(barbarian.skillPoints) points")

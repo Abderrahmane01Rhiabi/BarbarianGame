@@ -34,7 +34,7 @@ struct HomeView: View {
                             .font(.caption)
                             .multilineTextAlignment(.center)
                         
-                        Button("reessayer") {
+                        Button("réessayer") {
                             Task {
                                 await loadBarbarian()
                             }
@@ -128,13 +128,13 @@ struct HomeView: View {
                     Text("deconnexion")
                         .foregroundColor(.red)
                 }
-                .alert("deconnexion", isPresented: $showingLogoutAlert) {
+                .alert("déconnexion", isPresented: $showingLogoutAlert) {
                     Button("annuler", role: .cancel) { }
-                    Button("deconnexion", role: .destructive) {
+                    Button("déconnexion", role: .destructive) {
                         logout()
                     }
                 } message: {
-                    Text("voulez-vous vraiment vous deconnecter ?")
+                    Text("voulez-vous vraiment vous déconnecter ?")
                 }
                 
             }

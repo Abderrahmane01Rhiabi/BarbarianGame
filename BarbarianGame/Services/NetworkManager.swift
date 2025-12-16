@@ -60,7 +60,6 @@ class NetworkManager {
         }
         
         let (data, response) = try await URLSession.shared.data(for: request)
-        
         try validateResponse(response, data: data)
         
         do {
@@ -116,7 +115,6 @@ class NetworkManager {
         
         let (data, response) = try await URLSession.shared.data(for: request)
         try validateResponse(response, data: data)
-        
         do {
             let decoded = try JSONDecoder().decode(T.self, from: data)
             return decoded

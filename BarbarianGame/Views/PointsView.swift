@@ -1,10 +1,9 @@
 import SwiftUI
 struct PointsView: View {
-
     @StateObject private var vm: PointsViewModel
 
-    init(maxPoints: Int) {
-        _vm = StateObject(wrappedValue: PointsViewModel(maxPoints: maxPoints))
+    init(barbarian : Barbarian,maxPoints: Int) {
+        _vm = StateObject(wrappedValue: PointsViewModel(maxPoints: maxPoints,barbarian: barbarian))
     }
 
     var body: some View {
@@ -18,10 +17,10 @@ struct PointsView: View {
                 .font(.headline)
                 .padding(.horizontal)
 
-            statRow(icon: "⚔️", name: "attaque", value: $vm.attack, addAction: vm.addAttack,subAction: vm.subAttack)
-            statRow(icon: "🛡️", name: "defense", value: $vm.defense, addAction: vm.addDefense,subAction: vm.subDefense)
-            statRow(icon: "🎯", name: "precision", value: $vm.precision, addAction: vm.addPrecision,subAction: vm.subPrecision)
-            statRow(icon: "💨", name: "evasion", value: $vm.evasion, addAction: vm.addEvasion,subAction: vm.subEvasion)
+            statRow(icon: "⚔️", name: "attaque  \(vm.barbarian.attack) +", value: $vm.attack, addAction: vm.addAttack,subAction: vm.subAttack)
+            statRow(icon: "🛡️", name: "defense  \(vm.barbarian.defense) +", value: $vm.defense, addAction: vm.addDefense,subAction: vm.subDefense)
+            statRow(icon: "🎯", name: "precision  \(vm.barbarian.precision) +", value: $vm.precision, addAction: vm.addPrecision,subAction: vm.subPrecision)
+            statRow(icon: "💨", name: "evasion  \(vm.barbarian.evasion) +", value: $vm.evasion, addAction: vm.addEvasion,subAction: vm.subEvasion)
 
             Button {
                 Task {
@@ -32,6 +31,7 @@ struct PointsView: View {
                             vm.defense = 0
                             vm.precision = 0
                             vm.evasion = 0
+                            await vm.refreshBarbarian() //Pour modifier les stats sur la page
                         }
                     } catch {
                         vm.errorMessage = "Erreur lors de la dépense des points : \(error)"
@@ -53,8 +53,10 @@ struct PointsView: View {
         .padding()
         .background(Color.gray.opacity(0.05))
         .cornerRadius(10)
+        
     }
-    struct StatRow: View {
+    
+    struct StatRow: View { //On redéfinit StatRow pour pouvoir Binder les valeurs
         let icon: String
         let name: String
         @Binding var value: Int
@@ -86,95 +88,4 @@ struct PointsView: View {
 }
 
 
-@MainActor
-class PointsViewModel: ObservableObject {
-    var maxPoints : Int
-    @Published var points: Int
-    @Published var attack: Int = 0
-    @Published var defense: Int = 0
-    @Published var precision: Int = 0
-    @Published var evasion: Int = 0
-    @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
-
-    init(maxPoints: Int) {
-        self.maxPoints = maxPoints
-        self.points = maxPoints
-    }
-
-    func addAttack() {
-        guard points > 0 else { return }
-        attack += 1
-        points -= 1
-    }
-
-    func addDefense() {
-        guard points > 0 else { return }
-        defense += 1
-        points -= 1
-    }
-
-    func addPrecision() {
-        guard points > 0 else { return }
-        precision += 1
-        points -= 1
-    }
-
-    func addEvasion() {
-        guard points > 0 else { return }
-        evasion += 1
-        points -= 1
-    }
-    
-    func subAttack() {
-        guard attack > 0 && points < maxPoints else { return }
-        attack -= 1
-        points += 1
-    }
-
-
-    func subDefense() {
-        guard defense > 0 && points < maxPoints else { return }
-        defense -= 1
-        points += 1
-    }
-
-    func subPrecision() {
-        guard precision > 0 && points < maxPoints else { return }
-        precision -= 1
-        points += 1
-    }
-
-    func subEvasion() {
-        guard evasion > 0 && points < maxPoints else { return }
-        evasion -= 1
-        points += 1
-    }
-
-
-    var hasSpentPoints: Bool {
-        attack > 0 || defense > 0 || precision > 0 || evasion > 0
-    }
-
-    func depenserPoint() async throws{
-        isLoading = true
-        errorMessage = nil
-
-        do {
-            try await BarbarianService.shared.spendSkillPoints(
-                attack: attack,
-                defense: defense,
-                precision: precision,
-                evasion: evasion)
-        } catch NetworkError.pointinsuffisant {
-            errorMessage = "Vous n'avez pas assez de points"
-        } catch NetworkError.unauthorized {
-            errorMessage = "Session expirée."
-        } catch {
-            errorMessage = "Erreur réseau."
-        }
-        isLoading = false
-    }
-    
-}
 

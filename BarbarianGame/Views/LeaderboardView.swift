@@ -31,7 +31,7 @@ struct LeaderboardView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                     
-                    Button("Reessayer") {
+                    Button("Réessayer") {
                         Task {
                             await loadLeaderboard()
                         }
