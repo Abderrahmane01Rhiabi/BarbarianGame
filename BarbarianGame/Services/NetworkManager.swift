@@ -15,7 +15,9 @@ enum NetworkError: Error {
     case serverError(String)
     case unauthorized
     case waitdelay
-    case pointinsuffisant
+    case erreur400
+    case erreur404
+    case erreur403
 }
 
 // gestionnaire principal des requetes http
@@ -133,9 +135,13 @@ class NetworkManager {
         case 200...299:
             return
         case 400:
-            throw NetworkError.pointinsuffisant
+            throw NetworkError.erreur400
         case 401:
             throw NetworkError.unauthorized
+        case 403:
+            throw NetworkError.erreur403
+        case 404:
+            throw NetworkError.erreur404
         case 429 :
             throw NetworkError.waitdelay
         default:

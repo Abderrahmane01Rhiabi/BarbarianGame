@@ -26,7 +26,11 @@ class FightViewModel: ObservableObject {
             errorMessage = "Tu dois attendre avant de lancer un nouveau combat."
         } catch NetworkError.unauthorized {
             errorMessage = "Session expirée."
-        } catch {
+        }
+        catch NetworkError.erreur400 {
+            errorMessage = "Aucun barbare ou adversaire disponible."
+        }
+        catch {
             errorMessage = "Erreur réseau."
         }
         isLoading = false

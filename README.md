@@ -233,6 +233,9 @@ Interface simple avec champs username/password et lien vers inscription.
 ### Délai de rate limiting (429)
 **Gestion** : Message explicite à l'utilisateur + disable du bouton temporairement
 
+### Récupération des points de vie max des Barbare pour les replays
+**Problème** : L'API ne fournit pas les HPmax des barbares au moment du combat.
+
 ## 🔮 Améliorations possibles
 
 ### Fonctionnalités
@@ -242,6 +245,9 @@ Interface simple avec champs username/password et lien vers inscription.
 - [ ] Statistiques détaillées (winrate, etc.)
 - [ ] Système d'amis
 - [ ] Chat entre joueurs
+- [ ] Animer les replays comme les combats
+- [ ] Généraliser des méthodes et attributs
+- [ ] Le visuel en général
 
 ## 👥 Auteurs
 

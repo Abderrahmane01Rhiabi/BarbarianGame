@@ -88,7 +88,7 @@ class PointsViewModel: ObservableObject {
                 defense: defense,
                 precision: precision,
                 evasion: evasion)
-        } catch NetworkError.pointinsuffisant {
+        } catch NetworkError.erreur400 {
             errorMessage = "Vous n'avez pas assez de points"
         } catch NetworkError.unauthorized {
             errorMessage = "Session expirée."

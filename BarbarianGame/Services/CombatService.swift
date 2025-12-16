@@ -23,7 +23,11 @@ class CombatService {
             //Renvoie Erreur 429 si on demande un combat dans un délais court
             catch NetworkError.waitdelay {
                 throw NetworkError.waitdelay
-            } catch {
+            }
+            catch NetworkError.erreur400{ // Aucun barbare ou adversaire trouvé
+                throw NetworkError.erreur400
+            }
+            catch {
                 throw error
             }
         }
@@ -35,7 +39,14 @@ class CombatService {
                 endpoint: .myFights
             )
             return fights
-        } catch {
+        }
+        catch NetworkError.erreur403{ // Erreur d'un combat qui concerne pas le joueur
+            throw NetworkError.erreur403
+        }
+        catch NetworkError.erreur404{// Combat introuvable
+            throw NetworkError.erreur404
+        }
+        catch {
             throw error
         }
     }

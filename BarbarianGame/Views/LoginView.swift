@@ -125,15 +125,19 @@ struct LoginView: View {
                 case .decodingError:
                     errorMessage = "erreur de decodage json"
                 case .unauthorized:
-                    errorMessage = "non autorise"
+                    errorMessage = "Nom ou mot de passe invalide"
                 case .invalidURL:
                     errorMessage = "url invalide"
                 case .noData:
                     errorMessage = "pas de donnees"
                 case .waitdelay:
                     errorMessage = "retry plus tard"
-                case .pointinsuffisant:
-                        errorMessage = "pas assez de points"
+                case .erreur400:
+                        errorMessage = "Erreur 400"
+                case .erreur404:
+                        errorMessage = "Barbare introuvable"
+                case .erreur403:
+                        errorMessage = "Erreur 403"
                 }
            
             } else {

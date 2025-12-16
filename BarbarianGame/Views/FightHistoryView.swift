@@ -87,7 +87,16 @@ struct FightHistoryView: View {
             notificationManager.markAsChecked()
             
             isLoading = false
-        } catch {
+        }
+        catch NetworkError.erreur403{
+            isLoading = false
+            errorMessage = "Le combat ne concerne pas le joueur"
+        }
+        catch NetworkError.erreur404{
+            isLoading = false
+            errorMessage = "Combat introuvable"
+        }
+        catch {
             isLoading = false
             errorMessage = error.localizedDescription
             print("erreur chargement historique: \(error)")
@@ -102,6 +111,8 @@ struct FightHistoryRow: View {
     
     @State private var opponent: Barbarian?
     @State private var opponentAvatar: Avatar?
+    
+    @State private var errorMessage: String?
     
     var body: some View {
         NavigationLink(destination: FightHistoryDetailView(
@@ -193,6 +204,7 @@ struct FightHistoryRow: View {
     }
     
     func loadOpponent() async {
+        errorMessage = nil
         let opponentId = fight.opponentId(myBarbarianId: myBarbarian.id)
         
         do {
@@ -204,8 +216,12 @@ struct FightHistoryRow: View {
                 let avatars = try await BarbarianService.shared.getAvatars()
                 opponentAvatar = avatars.first { $0.id == avatarId }
             }
-        } catch {
-            print("erreur chargement adversaire: \(error)")
+        }
+        catch NetworkError.erreur404 {
+            errorMessage = "Barbare introuvable"
+        }
+        catch {
+            print("erreur : \(error)")
         }
     }
 }

@@ -96,8 +96,7 @@ struct RegisterView: View {
     func isFormValid() -> Bool {
         return !username.isEmpty &&
                !password.isEmpty &&
-               !confirmPassword.isEmpty &&
-               password == confirmPassword
+               !confirmPassword.isEmpty 
     }
     
     // fonction d'inscription
@@ -155,8 +154,12 @@ struct RegisterView: View {
                     errorMessage = "pas de donnees"
                 case .waitdelay:
                     errorMessage = "retry plus tard"
-                case .pointinsuffisant:
-                    errorMessage = "pas assez de points"
+                case .erreur400:
+                    errorMessage = "Nom déjà utilisé"
+                case .erreur404:
+                        errorMessage = "Barbare introuvable"
+                case .erreur403:
+                        errorMessage = "Erreur 403"
                 }
                 
             } else {
