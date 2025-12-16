@@ -141,6 +141,19 @@ struct FightHistoryRow: View {
                         
                         Spacer()
                         
+                        Text(fight.didIInitiate(myBarbarianId: myBarbarian.id) ? "Attaque" : "Defense")
+                            .font(.caption2)
+                            .bold()
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(
+                                fight.didIInitiate(myBarbarianId: myBarbarian.id)
+                                    ? Color.orange
+                                    : Color.blue
+                            )
+                            .foregroundColor(.white)
+                            .cornerRadius(5)
+                        
                         // icone victoire/defaite
                         if fight.didIWin(myBarbarianId: myBarbarian.id) {
                             Text("V")
@@ -168,6 +181,12 @@ struct FightHistoryRow: View {
             }
             .padding(.vertical, 5)
         }
+        .listRowBackground(
+            // couleur de fond selon qui a initie le combat
+            fight.didIInitiate(myBarbarianId: myBarbarian.id)
+                ? Color.orange.opacity(0.1)  // j'ai attaque
+                : Color.blue.opacity(0.1)     // je me suis fait attaquer
+        )
         .task {
             await loadOpponent()
         }

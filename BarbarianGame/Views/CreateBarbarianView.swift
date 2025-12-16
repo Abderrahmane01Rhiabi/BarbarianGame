@@ -11,6 +11,9 @@ struct CreateBarbarianView: View {
     
     @Environment(\.dismiss) var dismiss
     
+    // parametre pour savoir si c'est une recreation
+    let isRecreating: Bool
+    
     @State private var name: String = ""
     @State private var avatars: [Avatar] = []
     @State private var selectedAvatarId: Int?
@@ -19,12 +22,23 @@ struct CreateBarbarianView: View {
     @State private var isCreating: Bool = false
     @State private var errorMessage: String?
     
+    // initializer avec valeur par defaut
+    init(isRecreating: Bool = false) {
+        self.isRecreating = isRecreating
+    }
+    
     var body: some View {
         VStack(spacing: 20) {
             
-            Text("creer ton barbare")
+            Text(isRecreating ? "recreer ton barbare" : "creer ton barbare")
                 .font(.largeTitle)
                 .bold()
+
+            if isRecreating {
+                Text("ton ancien barbare sera supprime")
+                    .font(.caption)
+                    .foregroundColor(.red)
+            }
             
             // champ nom
             VStack(alignment: .leading, spacing: 5) {
@@ -88,14 +102,13 @@ struct CreateBarbarianView: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text("creer mon barbare")
+                    Text(isRecreating ? "recreer mon barbare" : "creer mon barbare")
                         .bold()
                 }
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(canCreate ? Color.green : Color.gray)
-            .foregroundColor(.white)
+            .background(canCreate ? (isRecreating ? Color.red : Color.green) : Color.gray)            .foregroundColor(.white)
             .cornerRadius(10)
             .disabled(!canCreate || isCreating)
             .padding(.horizontal)
@@ -137,7 +150,7 @@ struct CreateBarbarianView: View {
                 avatarId: avatarId
             )
             
-            print("barbare cree: \(barbarian.name)")
+            print("barbare \(isRecreating ? "recree" : "cree"): \(barbarian.name)")
             
             isCreating = false
             
@@ -146,8 +159,8 @@ struct CreateBarbarianView: View {
             
         } catch {
             isCreating = false
-            errorMessage = "erreur creation: \(error.localizedDescription)"
-            print("erreur creation barbare: \(error)")
+            errorMessage = "erreur \(isRecreating ? "recreation" : "creation"): \(error.localizedDescription)"
+            print("erreur \(isRecreating ? "recreation" : "creation") barbare: \(error)")
         }
     }
 }

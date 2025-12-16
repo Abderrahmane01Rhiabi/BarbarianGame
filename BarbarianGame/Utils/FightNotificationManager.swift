@@ -36,7 +36,9 @@ class FightNotificationManager: ObservableObject {
         }
         
         // formatter pour comparer les dates
-        let formatter = ISO8601DateFormatter()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
         
         // compter les combats plus recents que lastCheck
         // ET ou je me suis fait attaquer (pas initie par moi)
@@ -47,6 +49,10 @@ class FightNotificationManager: ObservableObject {
             
             let isNewer = fightDate > lastCheck
             let wasAttacked = !fight.didIInitiate(myBarbarianId: myBarbarianId) // si je me suis fait attaquer
+            
+            if isNewer || wasAttacked {
+                print("combat #\(fight.id): nouveau=\(isNewer), attaque=\(wasAttacked), lastCheck=\(lastCheck), date=\(fightDate)")
+            }
             
             return isNewer && wasAttacked
         }.count

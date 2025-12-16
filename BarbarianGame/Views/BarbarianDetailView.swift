@@ -12,7 +12,12 @@ struct BarbarianDetailView: View {
     @State private var avatar: Avatar?
     @State private var isLoadingAvatar = false
     
-
+    // gestion de la suppression/recreation
+    @State private var showDeleteAlert = false
+    @State private var navigateToCreate = false
+    @Environment(\.dismiss) var dismiss
+    
+    
     // observer les notifications de combat
     @StateObject private var notificationManager = FightNotificationManager.shared
 
@@ -200,6 +205,21 @@ struct BarbarianDetailView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                     }
+                    // bouton supprimer et recreer
+                    Button(action: {
+                        showDeleteAlert = true
+                    }) {
+                        HStack {
+                            Image(systemName: "trash.fill")
+                            Text("supprimer et recreer mon barbare")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.red.opacity(0.8))
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
+                    .padding(.top, 10)
                 }
                 
             }
@@ -219,6 +239,18 @@ struct BarbarianDetailView: View {
         }
         .navigationTitle("mon barbare")
         .navigationBarTitleDisplayMode(.inline)
+        .alert("supprimer mon barbare ?", isPresented: $showDeleteAlert) {
+            Button("annuler", role: .cancel) { }
+            Button("supprimer et recreer", role: .destructive) {
+                navigateToCreate = true
+            }
+        } message: {
+            Text("cette action est irreversible. ton barbare sera supprime et tu pourras en creer un nouveau de zero.")
+        }
+        .navigationDestination(isPresented: $navigateToCreate) {
+            CreateBarbarianView(isRecreating: true)
+                .navigationBarBackButtonHidden(true)
+        }
     }
     
     func loadAvatar() async {
@@ -240,6 +272,8 @@ struct BarbarianDetailView: View {
             do {
                 if let updatedBarbarian = try await BarbarianService.shared.getMyBarbarian() {
                     barbarian = updatedBarbarian
+                    // recharger l'avatar si l'avatarId a chang
+                    await loadAvatar()
                 }
             } catch {
                 print("erreur rafraichissement barbare: \(error)")
@@ -274,9 +308,13 @@ struct BarbarianDetailView: View {
 
     // verifier la presence de nouveaux combats
     func checkForNewFights() async {
+        print("timer start - verif des combats...")
+
         do {
             let fights = try await CombatService.shared.getMyFights()
+            print("API a renvoye \(fights.count) combats")
             notificationManager.countNewFights(fights: fights, myBarbarianId: barbarian.id)
+            print("badge count apres verification : \(notificationManager.newFightsCount)")
         } catch {
             print("erreur verification nouveaux combats: \(error)")
         }
